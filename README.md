@@ -11,7 +11,7 @@
 - 借阅归还：登记借书、库存扣减、归还入库
 - 逾期管理：按到期日自动识别逾期未还记录
 
-> 首次部署后请修改默认管理员密码或重新生成管理员密码哈希后更新数据库。
+> 首次部署后请修改默认管理员密码或重新生成管理员密码哈希来更新数据库。
 
 ## 默认登录账号
 
@@ -41,7 +41,7 @@
 ## 本地运行
 
 ```bash
-cd /Users/isaachuo/软件工程课设/code
+cd /code
 uv sync
 uv run python scripts/init_db.py --reset
 uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
@@ -52,14 +52,14 @@ uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 ## 部署
 
 ```bash
-cd /Users/isaachuo/软件工程课设/code
+cd /code
 chmod +x scripts/deploy.sh
 HOST=0.0.0.0 PORT=8000 ./scripts/deploy.sh
 ```
 
 部署脚本会：
 
-- 使用 `uv sync --frozen --no-dev` 创建或复用 `.venv`
+- 使用 `uv sync --frozen --no-dev` 创建
 - 初始化 `data/library.db`
 - 启动 Uvicorn
 
@@ -71,7 +71,7 @@ LIBRARY_DB_PATH=/opt/library/library.db ./scripts/deploy.sh
 
 ## 数据库脚本
 
-重建数据库并写入演示数据：
+重建数据库并写入演示的数据：
 
 ```bash
 uv run python scripts/init_db.py --reset
