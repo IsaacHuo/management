@@ -16,7 +16,7 @@ uv sync --frozen --no-dev
 uv run --no-sync python scripts/init_db.py
 
 echo "Library Management System is starting at http://${HOST}:${PORT}"
-echo "Default admin: admin / Admin@123456"
+echo "Default admin: admin / 123456"
 echo "Please change the default password after first deployment."
 
 exec uv run --no-sync uvicorn app.main:app --host "$HOST" --port "$PORT"

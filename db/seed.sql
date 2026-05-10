@@ -1,9 +1,12 @@
-INSERT OR IGNORE INTO admins (username, password_hash, display_name)
+INSERT INTO admins (username, password_hash, display_name)
 VALUES (
     'admin',
-    'pbkdf2_sha256$200000$library_admin_seed$zTKFgXr3eUBlID3MojccV48dD2eNyRyrrPWLAfpomd4=',
+    'pbkdf2_sha256$200000$library_admin_seed$rdmhK9zd4eM0d9yGVxrKqSQFF6oVnmEwJM3YaIxousA=',
     '系统管理员'
-);
+)
+ON CONFLICT(username) DO UPDATE SET
+    password_hash = excluded.password_hash,
+    display_name = excluded.display_name;
 
 INSERT OR IGNORE INTO books
 (isbn, title, author, publisher, category, published_year, total_count, available_count, location, status)
@@ -53,4 +56,3 @@ FROM books b, readers r
 WHERE b.isbn = '9787115428028'
   AND r.card_no = 'R2026001'
   AND NOT EXISTS (SELECT 1 FROM loans WHERE note = '数据库课程参考书');
-

@@ -16,6 +16,7 @@ const titles = {
 };
 
 const $ = (selector) => document.querySelector(selector);
+const validViews = new Set(Object.keys(titles));
 
 function showToast(message, isError = false) {
   const toast = $("#toast");
@@ -92,7 +93,7 @@ async function login(event) {
     localStorage.setItem("library_token", state.token);
     $("#admin-name").textContent = data.admin.display_name;
     setLoggedIn(true);
-    await loadCurrentView();
+    navigateTo("dashboard");
   } catch (err) {
     error.textContent = err.message;
     error.hidden = false;
@@ -107,6 +108,9 @@ async function logout(callApi = true) {
   state.admin = null;
   localStorage.removeItem("library_token");
   setLoggedIn(false);
+  if (window.location.hash !== "#login") {
+    window.location.hash = "login";
+  }
 }
 
 async function restoreSession() {
@@ -119,10 +123,34 @@ async function restoreSession() {
     state.admin = data.admin;
     $("#admin-name").textContent = data.admin.display_name;
     setLoggedIn(true);
-    await loadCurrentView();
+    routeFromHash();
   } catch {
     logout(false);
   }
+}
+
+function navigateTo(view) {
+  if (window.location.hash === `#${view}`) {
+    switchView(view);
+    return;
+  }
+  window.location.hash = view;
+}
+
+function routeFromHash() {
+  const view = window.location.hash.replace("#", "") || "dashboard";
+  if (!state.token) {
+    setLoggedIn(false);
+    if (view !== "login") {
+      window.location.hash = "login";
+    }
+    return;
+  }
+  if (view === "login") {
+    navigateTo("dashboard");
+    return;
+  }
+  switchView(validViews.has(view) ? view : "dashboard");
 }
 
 function switchView(view) {
@@ -390,8 +418,10 @@ document.addEventListener("DOMContentLoaded", () => {
   $("#reader-search-button").addEventListener("click", () => loadReaders().catch((err) => showToast(err.message, true)));
 
   document.querySelectorAll(".nav-button").forEach((button) => {
-    button.addEventListener("click", () => switchView(button.dataset.view));
+    button.addEventListener("click", () => navigateTo(button.dataset.view));
   });
+
+  window.addEventListener("hashchange", routeFromHash);
 
   document.body.addEventListener("click", (event) => {
     const target = event.target;

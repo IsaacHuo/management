@@ -34,7 +34,7 @@ fi
 
 TOKEN="$(curl -fsS -X POST "http://127.0.0.1:${PORT}/api/auth/login" \
   -H 'Content-Type: application/json' \
-  -d '{"username":"admin","password":"Admin@123456"}' \
+  -d '{"username":"admin","password":"123456"}' \
   | uv run --no-sync python -c 'import json,sys; print(json.load(sys.stdin)["token"])')"
 
 curl -fsS "http://127.0.0.1:${PORT}/api/dashboard/stats" \

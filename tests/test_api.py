@@ -18,7 +18,7 @@ def client(tmp_path, monkeypatch):
 def auth_headers(client: TestClient):
     response = client.post(
         "/api/auth/login",
-        json={"username": "admin", "password": "Admin@123456"},
+        json={"username": "admin", "password": "123456"},
     )
     assert response.status_code == 200
     token = response.json()["token"]
@@ -26,6 +26,12 @@ def auth_headers(client: TestClient):
 
 
 def test_login_and_dashboard_stats(client):
+    old_password = client.post(
+        "/api/auth/login",
+        json={"username": "admin", "password": "Admin@123456"},
+    )
+    assert old_password.status_code == 401
+
     headers = auth_headers(client)
     response = client.get("/api/dashboard/stats", headers=headers)
     assert response.status_code == 200
@@ -143,4 +149,3 @@ def test_overdue_endpoint_has_seed_record(client):
     items = response.json()["items"]
     assert len(items) >= 1
     assert all(item["loan_status"] == "overdue" for item in items)
-
